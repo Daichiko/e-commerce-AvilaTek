@@ -17,11 +17,17 @@ export function Route(
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
+    const constructor = target.constructor;
+    if (!constructor.instance) {
+      constructor.instance = new constructor();
+    }
+    const instance = constructor.instance;
+
     const routes: Route[] = Reflect.getMetadata("routes", target) || [];
     routes.push({
       path,
       method,
-      handler: [descriptor.value.bind(new target.constructor())],
+      handler: [descriptor.value.bind(instance)],
     });
     Reflect.defineMetadata("routes", routes, target);
   };
