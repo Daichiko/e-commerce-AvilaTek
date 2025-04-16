@@ -15,4 +15,9 @@ export class usuariosRoutes {
   postusuario(req: any, res: any) {
     this.usuarioController.create(req, res);
   }
+
+  @Route("/", "get")
+  getUsuarios(req: any, res: any) {
+    this.usuarioController.findAll(req, res);
+  }
 }

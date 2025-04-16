@@ -24,4 +24,13 @@ export default class UsuarioService {
       throw error;
     }
   }
+
+  async findAll(): Promise<Usuario[]> {
+    try {
+      return await this.usuarioRepository.find();
+    } catch (error: any) {
+      console.error("Error al buscar todos los usuarios:", error);
+      throw error;
+    }
+  }
 }

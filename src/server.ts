@@ -64,7 +64,6 @@ class Server {
 
       if (this.app[method]) {
         this.app[method](path, handler);
-        console.log(`Route mounted: [${method.toUpperCase()}] ${path}`);
       } else {
         console.error(
           `Error: Method '${method}' is not valid for path '${path}'`

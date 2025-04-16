@@ -16,4 +16,16 @@ export class UsuarioController {
         .json({ message: "Error al crear usuario", error: error.message });
     }
   }
+
+  async findAll(req: Request, res: Response): Promise<Response> {
+    try {
+      const usuarios = await this.usuarioService.findAll();
+      return res.status(200).json(usuarios);
+    } catch (error: any) {
+      console.error("Error al obtener usuarios:", error);
+      return res
+        .status(500)
+        .json({ message: "Error al obtener usuarios", error: error.message });
+    }
+  }
 }
