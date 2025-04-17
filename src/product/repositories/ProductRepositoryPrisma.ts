@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { IProductRepository } from "./IProductRepository";
 import { Product } from "@entities/product.entity";
+import { ApiError } from "../../common/errors/apiError";
 
 const prisma = new PrismaClient();
 
@@ -99,6 +100,41 @@ export class ProductRepositoryPrisma implements IProductRepository {
         stock: updatedStock,
         disponible: updatedStock > 0,
       },
+    });
+  }
+
+  async updateStockWithValidation(
+    orderItems: { productId: string; cantidad: number }[]
+  ): Promise<void> {
+    await prisma.$transaction(async (tx) => {
+      for (const item of orderItems) {
+        const product = await tx.product.findUnique({
+          where: { id: item.productId },
+        });
+
+        if (!product) {
+          throw new ApiError(
+            `Producto con ID ${item.productId} no encontrado`,
+            404,
+            []
+          );
+        }
+
+        const newStock = product.stock - item.cantidad;
+
+        if (newStock < 0) {
+          throw new ApiError(
+            `Stock insuficiente para producto ${product.id}. Disponible: ${product.stock}, solicitado: ${item.cantidad}`,
+            400,
+            []
+          );
+        }
+
+        await tx.product.update({
+          where: { id: product.id },
+          data: { stock: newStock },
+        });
+      }
     });
   }
 }
