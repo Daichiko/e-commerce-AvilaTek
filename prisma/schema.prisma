@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id            String      @id @default(uuid())
   nombre        String
-  email         String   @unique
+  email         String      @unique
   password      String
-  fechaCreacion DateTime @default(now())
+  fechaCreacion DateTime    @default(now())
   orders        Order[]
+  UserRoles     UserRoles[]
 }
 
 model Product {
@@ -51,4 +52,21 @@ model OrderItem {
 
   pedido   Order   @relation(fields: [pedidoId], references: [id])
   producto Product @relation(fields: [productoId], references: [id])
+}
+
+model Role {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String?
+  UserRoles   UserRoles[]
+}
+
+model UserRoles {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+
+  @@id([userId, roleId])
 }
