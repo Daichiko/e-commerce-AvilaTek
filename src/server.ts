@@ -5,6 +5,7 @@ import cors from "cors";
 import env from "./common/config/config";
 import { UsersRoutes } from "./users/users.routes";
 import { RolesRoutes } from "./roles/roles.routes";
+import { ProductsRoutes } from "./product/product.routes";
 
 // import swaggerUi from "swagger-ui-express";
 // import swaggerJsdoc from "swagger-jsdoc";
@@ -49,7 +50,7 @@ class Server {
     const instance = new ControllerClass();
 
     definedRoutes.forEach((route) => {
-      const path = `/api${route.path}`;
+      const path = `/api/${env.appConfig.apiVersion}${route.path}`;
       const method = route.method.toLowerCase();
       const handler = route.handler.map((fn: any) => fn.bind(instance));
 
@@ -72,6 +73,7 @@ class Server {
 
     this.importRoutesAutomatically(UsersRoutes);
     this.importRoutesAutomatically(RolesRoutes);
+    this.importRoutesAutomatically(ProductsRoutes);
   }
 
   start(): void {

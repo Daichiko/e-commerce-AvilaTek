@@ -21,6 +21,7 @@ model User {
   fechaCreacion DateTime    @default(now())
   orders        Order[]
   UserRoles     UserRoles[]
+  products      Product[]
 }
 
 model Product {
@@ -31,6 +32,8 @@ model Product {
   stock         Int
   disponible    Boolean     @default(true)
   fechaCreacion DateTime    @default(now())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
   orderItems    OrderItem[]
 }
 
