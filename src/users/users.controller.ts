@@ -16,11 +16,12 @@ export class UserController {
     return res.status(201).json(response);
   }
 
-  async findAll(req: Request, res: Response): Promise<Response> {
-    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const size = req.query.size ? parseInt(req.query.size as string, 10) : 10;
+  async table(req: Request, res: Response): Promise<Response> {
+    const { pageQuery, sizeQuery, ...filter } = req.query;
+    const page = pageQuery ? parseInt(pageQuery as string, 10) : 1;
+    const size = sizeQuery ? parseInt(sizeQuery as string, 10) : 10;
 
-    const response = await this.userService.findAll(page, size);
+    const response = await this.userService.table(page, size, filter);
     return res.status(200).json(response);
   }
 

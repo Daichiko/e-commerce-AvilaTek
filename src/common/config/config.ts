@@ -7,6 +7,7 @@ export default {
     port: process.env.PORT || 3000,
     env: process.env.NODE_ENV || "prod",
     tableRoutes: process.env.TABLE_ROUTES === "true" || false,
+    apiVersion: process.env.API_VERSION || "v1",
   },
   postgresConfig: {
     host: process.env.POSTGRES_HOST || "localhost",

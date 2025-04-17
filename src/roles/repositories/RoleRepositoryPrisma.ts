@@ -26,8 +26,36 @@ export class RoleRepositoryPrisma implements IRoleRepository {
     return await prisma.role.findMany();
   }
 
-  async table(page: number, size: number) {
-    return await prisma.role.findMany({ skip: (page - 1) * size, take: size });
+  async table(
+    page: number,
+    size: number,
+    filter: any
+  ): Promise<{
+    data: Role[];
+    count: number;
+  }> {
+    const validFilters = ["name", "description"];
+
+    const where: any = {};
+
+    for (const key in filter) {
+      if (validFilters.includes(key)) {
+        const value = filter[key];
+
+        where[key] = { contains: value, mode: "insensitive" };
+      }
+    }
+
+    const [data, count] = await Promise.all([
+      prisma.role.findMany({
+        where,
+        skip: (page - 1) * size,
+        take: size,
+      }),
+      prisma.role.count({ where }),
+    ]);
+
+    return { data, count };
   }
 
   async assignRoleToUser(data: UserRole): Promise<UserRole> {
@@ -50,13 +78,15 @@ export class RoleRepositoryPrisma implements IRoleRepository {
     });
   }
 
-  async findRolesByUserId(userId: string): Promise<UserRole[]> {
-    console.log("userId: ", userId);
+  async findRolesByUserId(userId: string): Promise<Role[]> {
     const userRoles = await prisma.userRoles.findMany({
       where: { userId },
+      include: {
+        role: true,
+      },
     });
 
-    return userRoles;
+    return userRoles.map((r) => r.role);
   }
 
   async findRolesByIds(userId: string, roleId: string): Promise<UserRole> {

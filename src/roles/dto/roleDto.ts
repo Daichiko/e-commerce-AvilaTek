@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength } from "class-validator";
+import { IsString, IsOptional, MinLength, IsUUID } from "class-validator";
 
 export class CreateRoleDto {
   @IsString({ message: "El nombre del rol debe ser una cadena de texto" })
@@ -29,8 +29,10 @@ export class UpdateRoleDto {
 
 export class AssignRoleToUserDto {
   @IsString({ message: "El ID del usuario debe ser una cadena de texto" })
+  @IsUUID("4", { message: "El ID del usuario debe ser un UUID válido" })
   userId: string;
 
   @IsString({ message: "El ID del rol debe ser una cadena de texto" })
+  @IsUUID("4", { message: "El ID del role debe ser un UUID válido" })
   roleId: string;
 }
