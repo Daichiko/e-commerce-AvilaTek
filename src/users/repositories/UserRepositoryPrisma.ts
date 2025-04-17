@@ -8,12 +8,26 @@ export class UserRepositoryPrisma implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await prisma.user.findUnique({ where: { email } });
+    return await prisma.user.findUnique({
+      where: { email },
+      include: {
+        UserRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
   }
 
-  async findAll(): Promise<UserWithoutPassword[] | null> {
+  async findAll(
+    page: number,
+    size: number
+  ): Promise<UserWithoutPassword[] | null> {
     return await prisma.user.findMany({
       select: { id: true, nombre: true, email: true, fechaCreacion: true },
+      skip: (page - 1) * size,
+      take: size,
     });
   }
 

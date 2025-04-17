@@ -26,6 +26,10 @@ export class RoleRepositoryPrisma implements IRoleRepository {
     return await prisma.role.findMany();
   }
 
+  async table(page: number, size: number) {
+    return await prisma.role.findMany({ skip: (page - 1) * size, take: size });
+  }
+
   async delete(id: string) {
     await prisma.role.delete({
       where: { id },
@@ -61,20 +65,22 @@ export class RoleRepositoryPrisma implements IRoleRepository {
     return userRoles;
   }
 
+  async findRolesByIds(userId: string, roleId: string): Promise<UserRole> {
+    const userRoles = await prisma.userRoles.findUnique({
+      where: { userId_roleId: { userId, roleId } },
+    });
+
+    return userRoles;
+  }
+
   async findRoleNamesByUserId(userId: string): Promise<string[]> {
     const userRoles = await prisma.userRoles.findMany({
       where: { userId },
+      include: {
+        role: true,
+      },
     });
 
-    const roles = [];
-
-    for (const userRole of userRoles) {
-      const role = await prisma.role.findUnique({
-        where: { id: userRole.roleId },
-      });
-      roles.push(role);
-    }
-
-    return roles.map((r) => r.name);
+    return userRoles.map((r) => r.role.name);
   }
 }

@@ -9,13 +9,9 @@ import { validateDto } from "../common/utils/validateDto";
 import { ApiError } from "../common/errors/apiError";
 import bcrypt from "bcrypt";
 import jwt from "../common/utils/jwt";
-import { IRoleRepository } from "roles/repositories/IRoleRepository";
 
 export class UserService {
-  constructor(
-    private userRepository: IUserRepository,
-    private roleRepository: IRoleRepository
-  ) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async create(dto: CreateUserDto) {
     const dtoValidate = await validateDto(CreateUserDto, dto);
@@ -46,8 +42,12 @@ export class UserService {
     return user;
   }
 
-  async findAll() {
-    return this.userRepository.findAll();
+  async findAll(page: number, size: number) {
+    if (page <= 0 || size <= 0) {
+      throw new ApiError("Los datos de paginacion no son validos", 400, []);
+    }
+
+    return this.userRepository.findAll(page, size);
   }
 
   async update(id: string, dto: UpdateUserDto) {
@@ -94,7 +94,7 @@ export class UserService {
       throw new ApiError("Contraseña incorrecta", 400, []);
     }
 
-    const roles = await this.roleRepository.findRoleNamesByUserId(user.id);
+    const roles = user["UserRoles"].map((r) => r.role.name);
 
     const token: any = jwt.sign({
       id: user.id,

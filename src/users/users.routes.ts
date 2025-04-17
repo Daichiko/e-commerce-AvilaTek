@@ -6,18 +6,13 @@ import { UserService } from "./users.service";
 import { Controller } from "../common/decorators/controllers.decorator";
 import { UserRepositoryPrisma } from "./repositories/UserRepositoryPrisma";
 import { VerifyToken } from "../common/decorators/verifyToken.decorator";
-import { RoleRepositoryPrisma } from "../roles/repositories/RoleRepositoryPrisma";
 
 @Controller("/users")
 export class UsersRoutes {
   public static router: Router;
 
-  protected roleRepository = new RoleRepositoryPrisma();
   protected userRepository = new UserRepositoryPrisma();
-  protected userService = new UserService(
-    this.userRepository,
-    this.roleRepository
-  );
+  protected userService = new UserService(this.userRepository);
   protected userController = new UserController(this.userService);
 
   @Route("/", "post")
