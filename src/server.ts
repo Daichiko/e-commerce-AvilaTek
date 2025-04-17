@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import env from "./common/config/config";
 import { UsersRoutes } from "./users/users.routes";
+import { RolesRoutes } from "./roles/roles.routes";
 
 // import swaggerUi from "swagger-ui-express";
 // import swaggerJsdoc from "swagger-jsdoc";
@@ -70,6 +71,7 @@ class Server {
     });
 
     this.importRoutesAutomatically(UsersRoutes);
+    this.importRoutesAutomatically(RolesRoutes);
   }
 
   start(): void {

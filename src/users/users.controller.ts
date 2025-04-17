@@ -37,4 +37,12 @@ export class UserController {
     await this.userService.delete(req.params.id);
     return res.status(204).send();
   }
+
+  async changePassword(req: Request, res: Response) {
+    const result = await this.userService.changePassword(
+      req.params.id,
+      req.body
+    );
+    return res.status(200).json(result);
+  }
 }

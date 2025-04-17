@@ -1,14 +1,21 @@
 import { IUserRepository } from "./repositories/IUserRepository";
-import { CreateUserDto } from "./dto/createUserDto";
-import { UpdateUserDto } from "./dto/updateUserDto";
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  loginDto,
+  changePasswordDto,
+} from "./dto/userDto";
 import { validateDto } from "../common/utils/validateDto";
 import { ApiError } from "../common/errors/apiError";
-import { loginDto } from "./dto/loginDto";
 import bcrypt from "bcrypt";
 import jwt from "../common/utils/jwt";
+import { IRoleRepository } from "roles/repositories/IRoleRepository";
 
 export class UserService {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private roleRepository: IRoleRepository
+  ) {}
 
   async create(dto: CreateUserDto) {
     const dtoValidate = await validateDto(CreateUserDto, dto);
@@ -71,35 +78,49 @@ export class UserService {
   }
 
   async login(dto: loginDto) {
-    try {
-      const dtoValidate = await validateDto(loginDto, dto);
-      const user = await this.userRepository.findByEmail(dtoValidate.email);
+    const dtoValidate = await validateDto(loginDto, dto);
+    const user = await this.userRepository.findByEmail(dtoValidate.email);
 
-      if (!user) {
-        throw new ApiError("El correo no se encuentra registrado", 400, []);
-      }
-
-      const validPassword = bcrypt.compareSync(
-        dtoValidate.password,
-        user.password
-      );
-
-      if (!validPassword) {
-        throw new ApiError("Contraseña incorrecta", 400, []);
-      }
-
-      const token: any = jwt.sign({
-        id: user.id,
-        email: user.email,
-      });
-
-      return { token, message: "Inicio de sesion satisfactorio" };
-    } catch (error) {
-      throw new ApiError("Error al iniciar sesion", 400, []);
+    if (!user) {
+      throw new ApiError("El correo no se encuentra registrado", 400, []);
     }
+
+    const validPassword = bcrypt.compareSync(
+      dtoValidate.password,
+      user.password
+    );
+
+    if (!validPassword) {
+      throw new ApiError("Contraseña incorrecta", 400, []);
+    }
+
+    const roles = await this.roleRepository.findRoleNamesByUserId(user.id);
+
+    const token: any = jwt.sign({
+      id: user.id,
+      email: user.email,
+      roles: roles,
+    });
+
+    return { token, message: "Inicio de sesión satisfactorio" };
   }
 
   async delete(id: string) {
     return this.userRepository.delete(id);
+  }
+
+  async changePassword(id: string, dto: changePasswordDto) {
+    const dtoValidate = await validateDto(changePasswordDto, dto);
+
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new ApiError("Usuario no encontrado", 404, []);
+    }
+
+    const encriptarPassword = bcrypt.hashSync(dtoValidate.password, 10);
+
+    await this.userRepository.update(id, { password: encriptarPassword });
+
+    return { message: "Contraseña actualizada exitosamente" };
   }
 }

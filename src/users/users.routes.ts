@@ -1,17 +1,23 @@
 import { Router } from "express";
 import { UserController } from "./users.controller";
 import { Route } from "../common/decorators/routes.decorator";
+import { authorize } from "../common/decorators/authorize.decorator";
 import { UserService } from "./users.service";
 import { Controller } from "../common/decorators/controllers.decorator";
-import { UserRepositoryPrisma } from "./repositories/UserRepositoryPrisma.ts";
+import { UserRepositoryPrisma } from "./repositories/UserRepositoryPrisma";
 import { VerifyToken } from "../common/decorators/verifyToken.decorator";
+import { RoleRepositoryPrisma } from "../roles/repositories/RoleRepositoryPrisma";
 
 @Controller("/users")
 export class UsersRoutes {
   public static router: Router;
 
-  protected repo = new UserRepositoryPrisma();
-  protected userService = new UserService(this.repo);
+  protected roleRepository = new RoleRepositoryPrisma();
+  protected userRepository = new UserRepositoryPrisma();
+  protected userService = new UserService(
+    this.userRepository,
+    this.roleRepository
+  );
   protected userController = new UserController(this.userService);
 
   @Route("/", "post")
@@ -32,6 +38,7 @@ export class UsersRoutes {
 
   @VerifyToken()
   @Route("/", "get")
+  @authorize(["admin"])
   getUsuarios(req: any, res: any) {
     this.userController.findAll(req, res);
   }
@@ -46,5 +53,12 @@ export class UsersRoutes {
   @Route("/:id", "delete")
   deleteUsuario(req: any, res: any) {
     this.userController.delete(req, res);
+  }
+
+  // Ruta para cambiar la contraseña
+  @VerifyToken()
+  @Route("/:id/password", "put")
+  async putChangePassword(req: any, res: any) {
+    this.userController.changePassword(req, res);
   }
 }
