@@ -20,7 +20,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     });
   }
 
-  async findAll(
+  async table(
     page: number,
     size: number,
     filter: any

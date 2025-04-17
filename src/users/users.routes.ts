@@ -32,10 +32,10 @@ export class UsersRoutes {
   }
 
   @VerifyToken()
-  @Route("/", "get")
+  @Route("/table", "get")
   @authorize(["admin"])
   getUsuarios(req: any, res: any) {
-    this.userController.findAll(req, res);
+    this.userController.table(req, res);
   }
 
   @VerifyToken()

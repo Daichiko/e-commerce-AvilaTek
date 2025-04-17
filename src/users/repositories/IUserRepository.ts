@@ -6,7 +6,7 @@ export interface IUserRepository {
   findById(id: string): Promise<UserWithoutPassword>;
   update(id: string, data: Partial<User>): Promise<UserWithoutPassword>;
   delete(id: string): Promise<void>;
-  findAll(
+  table(
     page: number,
     size: number,
     filter: any

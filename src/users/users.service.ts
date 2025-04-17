@@ -42,12 +42,12 @@ export class UserService {
     return user;
   }
 
-  async findAll(page: number, size: number, filter: any) {
+  async table(page: number, size: number, filter: any) {
     if (page <= 0 || size <= 0) {
       throw new ApiError("Los datos de paginacion no son validos", 400, []);
     }
 
-    return this.userRepository.findAll(page, size, filter);
+    return this.userRepository.table(page, size, filter);
   }
 
   async update(id: string, dto: UpdateUserDto) {
