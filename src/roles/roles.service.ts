@@ -45,15 +45,6 @@ export class RoleService {
     return this.roleRepository.table(page, size);
   }
 
-  async delete(id: string) {
-    const existing = await this.roleRepository.findById(id);
-    if (!existing) {
-      throw new ApiError("El rol no existe", 404, []);
-    }
-
-    return this.roleRepository.delete(id);
-  }
-
   async assignRoleToUser(dto: AssignRoleToUserDto) {
     const dtoValidated = await validateDto(AssignRoleToUserDto, dto);
 

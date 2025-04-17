@@ -46,11 +46,11 @@ export class UsersRoutes {
 
   @VerifyToken()
   @Route("/:id", "delete")
+  @authorize(["admin"])
   deleteUsuario(req: any, res: any) {
     this.userController.delete(req, res);
   }
 
-  // Ruta para cambiar la contraseña
   @VerifyToken()
   @Route("/:id/password", "put")
   async putChangePassword(req: any, res: any) {
