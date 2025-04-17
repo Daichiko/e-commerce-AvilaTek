@@ -5,3 +5,5 @@ export class User {
   password: string;
   fechaCreacion: Date;
 }
+
+export type UserWithoutPassword = Omit<User, "password">;

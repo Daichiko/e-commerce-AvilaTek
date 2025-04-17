@@ -9,9 +9,4 @@ export class UpdateUserDto {
   @IsEmail({}, { message: "Debe proporcionar un correo electrónico válido" })
   @IsOptional()
   email?: string;
-
-  @IsString({ message: "La contraseña debe ser una cadena de texto" })
-  @MinLength(8, { message: "La contraseña debe tener al menos 8 caracteres" })
-  @IsOptional()
-  password?: string;
 }

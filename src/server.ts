@@ -45,10 +45,12 @@ class Server {
     const definedRoutes: any[] =
       Reflect.getMetadata("routes", ControllerClass.prototype) || [];
 
+    const instance = new ControllerClass();
+
     definedRoutes.forEach((route) => {
       const path = `/api${route.path}`;
       const method = route.method.toLowerCase();
-      const handler = route.handler[0];
+      const handler = route.handler.map((fn: any) => fn.bind(instance));
 
       if (this.app[method]) {
         this.app[method](path, handler);
