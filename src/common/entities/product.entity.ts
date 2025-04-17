@@ -6,4 +6,5 @@ export class Product {
   stock: number;
   disponible: boolean;
   fechaCreacion: Date;
+  userId: string;
 }
