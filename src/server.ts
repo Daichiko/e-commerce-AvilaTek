@@ -2,11 +2,8 @@ import "reflect-metadata";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { PostgresConnectionDB } from "./common/config/connectionDB";
 import env from "./common/config/config";
-import { usuariosRoutes } from "./usuarios/usuarios.routes";
-import { glob } from "glob";
-import path from "path";
+import { UsersRoutes } from "./users/users.routes";
 
 // import swaggerUi from "swagger-ui-express";
 // import swaggerJsdoc from "swagger-jsdoc";
@@ -17,16 +14,7 @@ class Server {
   constructor() {
     this.app = express();
     this.config();
-    this.dbConnection().catch(() => {});
     this.routes();
-  }
-
-  async dbConnection(): Promise<void> {
-    try {
-      await PostgresConnectionDB.initialize();
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   config(): void {
@@ -79,11 +67,12 @@ class Server {
       });
     });
 
-    this.importRoutesAutomatically(usuariosRoutes);
+    this.importRoutesAutomatically(UsersRoutes);
   }
 
   start(): void {
     this.app.listen(this.app.get("port"), () => {});
+    console.log("Escuchando por el puerto ", this.app.get("port"));
   }
 }
 
