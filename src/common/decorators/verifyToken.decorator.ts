@@ -1,11 +1,8 @@
 import Jwt from "../utils/jwt";
 import { Route } from "../interfaces/route.interface";
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import { NextFunction, Response } from "express";
 import "reflect-metadata";
-
-interface RequestExt extends Request {
-  TokenDecode: any;
-}
+import { RequestExt } from "../interfaces/resquestToken";
 
 function verifyToken(req: RequestExt, res: Response, next: NextFunction) {
   const authHeader = req.headers["authorization"];
