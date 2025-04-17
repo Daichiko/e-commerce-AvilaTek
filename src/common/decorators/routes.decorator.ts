@@ -1,13 +1,6 @@
-import { RequestHandler } from "express";
+import { Route } from "../interfaces/route.interface";
 import "reflect-metadata";
-// Define una interfaz para representar una ruta
-interface Route {
-  path: string;
-  method: "get" | "post" | "patch" | "put" | "delete";
-  handler: RequestHandler[];
-}
 
-// Define el decorador de ruta
 export function Route(
   path: string,
   method: "get" | "post" | "patch" | "put" | "delete"
