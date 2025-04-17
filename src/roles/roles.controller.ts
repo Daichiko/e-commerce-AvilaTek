@@ -21,6 +21,14 @@ export class RoleController {
     return res.status(200).json(roles);
   }
 
+  async table(req: Request, res: Response): Promise<Response> {
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+    const size = req.query.size ? parseInt(req.query.size as string, 10) : 10;
+
+    const roles = await this.roleService.table(page, size);
+    return res.status(200).json(roles);
+  }
+
   async delete(req: Request, res: Response): Promise<Response> {
     await this.roleService.delete(req.params.id);
     return res.status(204).send();

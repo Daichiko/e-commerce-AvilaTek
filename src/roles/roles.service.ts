@@ -37,6 +37,14 @@ export class RoleService {
     return this.roleRepository.findAll();
   }
 
+  async table(page: number, size: number) {
+    if (page <= 0 || size <= 0) {
+      throw new ApiError("Los datos de paginacion no son validos", 400, []);
+    }
+
+    return this.roleRepository.table(page, size);
+  }
+
   async delete(id: string) {
     const existing = await this.roleRepository.findById(id);
     if (!existing) {
@@ -59,15 +67,12 @@ export class RoleService {
       throw new ApiError("El usuario especificado no existe", 404, []);
     }
 
-    const userRoles = await this.roleRepository.findRolesByUserId(
-      dtoValidated.userId
+    const userRoles = await this.roleRepository.findRolesByIds(
+      dtoValidated.userId,
+      dtoValidated.roleId
     );
 
-    const roleAlreadyAssigned = userRoles.some(
-      (ur) => ur.roleId === dtoValidated.roleId
-    );
-
-    if (roleAlreadyAssigned) {
+    if (userRoles) {
       throw new ApiError("El usuario ya posee dicho rol", 404, []);
     }
 

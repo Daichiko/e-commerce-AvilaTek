@@ -17,7 +17,10 @@ export class UserController {
   }
 
   async findAll(req: Request, res: Response): Promise<Response> {
-    const response = await this.userService.findAll();
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+    const size = req.query.size ? parseInt(req.query.size as string, 10) : 10;
+
+    const response = await this.userService.findAll(page, size);
     return res.status(200).json(response);
   }
 
@@ -43,6 +46,7 @@ export class UserController {
       req.params.id,
       req.body
     );
+
     return res.status(200).json(result);
   }
 }
