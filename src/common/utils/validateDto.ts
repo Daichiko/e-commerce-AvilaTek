@@ -8,7 +8,6 @@ export async function validateDto<T extends object>(
   input: object
 ): Promise<T> {
   const dtoInstance = plainToInstance(dtoClass, input);
-
   const errors = await validate(dtoInstance, { whitelist: true });
 
   if (errors.length > 0) {

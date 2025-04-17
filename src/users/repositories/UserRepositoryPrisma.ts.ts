@@ -1,5 +1,5 @@
 import { IUserRepository } from "./IUserRepository";
-import { User } from "@entities/user.entity";
+import { User, UserWithoutPassword } from "@entities/user.entity";
 import { prisma } from "../../common/config/connectionDB";
 
 export class UserRepositoryPrisma implements IUserRepository {
@@ -11,12 +11,17 @@ export class UserRepositoryPrisma implements IUserRepository {
     return await prisma.user.findUnique({ where: { email } });
   }
 
-  async findAll(): Promise<User[] | null> {
-    return await prisma.user.findMany();
+  async findAll(): Promise<UserWithoutPassword[] | null> {
+    return await prisma.user.findMany({
+      select: { id: true, nombre: true, email: true, fechaCreacion: true },
+    });
   }
 
-  async findById(id: string): Promise<User | null> {
-    return await prisma.user.findUnique({ where: { id } });
+  async findById(id: string): Promise<UserWithoutPassword | null> {
+    return await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, nombre: true, email: true, fechaCreacion: true },
+    });
   }
 
   async update(id: string, data: Partial<User>): Promise<User> {

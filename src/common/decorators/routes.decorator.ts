@@ -20,7 +20,7 @@ export function Route(
     routes.push({
       path,
       method,
-      handler: [descriptor.value.bind(instance)],
+      handler: [descriptor.value],
     });
     Reflect.defineMetadata("routes", routes, target);
   };
