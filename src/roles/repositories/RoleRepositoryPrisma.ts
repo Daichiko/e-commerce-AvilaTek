@@ -30,12 +30,6 @@ export class RoleRepositoryPrisma implements IRoleRepository {
     return await prisma.role.findMany({ skip: (page - 1) * size, take: size });
   }
 
-  async delete(id: string) {
-    await prisma.role.delete({
-      where: { id },
-    });
-  }
-
   async assignRoleToUser(data: UserRole): Promise<UserRole> {
     return await prisma.userRoles.create({
       data: {

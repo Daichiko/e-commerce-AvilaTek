@@ -29,11 +29,6 @@ export class RoleController {
     return res.status(200).json(roles);
   }
 
-  async delete(req: Request, res: Response): Promise<Response> {
-    await this.roleService.delete(req.params.id);
-    return res.status(204).send();
-  }
-
   async assignRoleToUser(req: Request, res: Response): Promise<Response> {
     const result = await this.roleService.assignRoleToUser(req.body);
     return res.status(200).json({
