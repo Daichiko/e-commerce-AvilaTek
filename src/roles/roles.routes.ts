@@ -49,6 +49,13 @@ export class RolesRoutes {
   }
 
   @VerifyToken()
+  @Route("/table", "get")
+  @authorize(["admin"])
+  getRolesTable(req: any, res: any) {
+    this.roleController.table(req, res);
+  }
+
+  @VerifyToken()
   @Route("/by-user/:userId", "get")
   @authorize(["admin"])
   getRolesByUser(req: any, res: any) {

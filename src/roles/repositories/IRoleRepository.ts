@@ -6,10 +6,17 @@ export interface IRoleRepository {
   findById(id: string): Promise<Role | null>;
   findByName(name: string): Promise<Role | null>;
   findAll(): Promise<Role[]>;
-  table(page: number, size: number): Promise<Role[]>;
+  table(
+    page: number,
+    size: number,
+    filter: any
+  ): Promise<{
+    data: Role[];
+    count: number;
+  }>;
   assignRoleToUser(data: UserRole): Promise<UserRole>;
   removeRoleFromUser(data: UserRole): Promise<void>;
-  findRolesByUserId(userId: string): Promise<UserRole[]>;
+  findRolesByUserId(userId: string): Promise<Role[]>;
   findRolesByIds(userId: string, roleId: string): Promise<UserRole>;
   findRoleNamesByUserId(userId: string): Promise<string[]>;
 }

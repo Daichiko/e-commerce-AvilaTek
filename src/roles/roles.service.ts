@@ -37,12 +37,12 @@ export class RoleService {
     return this.roleRepository.findAll();
   }
 
-  async table(page: number, size: number) {
+  async table(page: number, size: number, filter: any) {
     if (page <= 0 || size <= 0) {
       throw new ApiError("Los datos de paginacion no son validos", 400, []);
     }
 
-    return this.roleRepository.table(page, size);
+    return this.roleRepository.table(page, size, filter);
   }
 
   async assignRoleToUser(dto: AssignRoleToUserDto) {
