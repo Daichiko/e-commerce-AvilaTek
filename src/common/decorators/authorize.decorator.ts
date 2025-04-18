@@ -1,5 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 
+/**
+ * Decorador que restringe el acceso a rutas según los roles del usuario autenticado.
+ *
+ * Este decorador verifica que el token decodificado (`TokenDecode`) contenga alguno de los
+ * roles permitidos antes de ejecutar el método. Si el usuario no tiene los permisos necesarios,
+ * responde con un error 403.
+ *
+ * @param roles - Lista de roles permitidos para acceder al método decorado.
+ *
+ * @example
+ * ```ts
+ * @authorize(["admin", "seller"])
+ * async someProtectedMethod(req: Request, res: Response) {
+ *   // Lógica ejecutada solo si el usuario tiene el rol adecuado
+ * }
+ * ```
+ */
 function authorize(roles: string[]): MethodDecorator {
   return function (
     target: any,

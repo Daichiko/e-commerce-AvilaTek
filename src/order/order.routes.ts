@@ -9,6 +9,9 @@ import { authorize } from "../common/decorators/authorize.decorator";
 import { UserRepositoryPrisma } from "../users/repositories/UserRepositoryPrisma";
 import { ProductRepositoryPrisma } from "../product/repositories/ProductRepositoryPrisma";
 
+/**
+ * Controlador de rutas para manejar las operaciones relacionadas con las órdenes.
+ */
 @Controller("/orders")
 export class OrdersRoutes {
   public static router: Router;
@@ -24,6 +27,13 @@ export class OrdersRoutes {
   );
   protected orderController = new OrderController(this.orderService);
 
+  /**
+   * Ruta para crear una nueva orden.
+   *
+   * @param req La solicitud HTTP.
+   * @param res La respuesta HTTP.
+   * @returns La nueva orden creada.
+   */
   @VerifyToken()
   @Route("/", "post")
   @authorize(["user"])
@@ -31,6 +41,13 @@ export class OrdersRoutes {
     this.orderController.create(req, res);
   }
 
+  /**
+   * Ruta para obtener una tabla de órdenes con paginación y filtros.
+   *
+   * @param req La solicitud HTTP.
+   * @param res La respuesta HTTP.
+   * @returns Una lista de órdenes con paginación y filtros aplicados.
+   */
   @VerifyToken()
   @Route("/table", "get")
   @authorize(["user", "seller", "admin"])
@@ -38,6 +55,13 @@ export class OrdersRoutes {
     this.orderController.table(req, res);
   }
 
+  /**
+   * Ruta para obtener una orden por su ID.
+   *
+   * @param req La solicitud HTTP.
+   * @param res La respuesta HTTP.
+   * @returns La orden encontrada.
+   */
   @VerifyToken()
   @Route("/:id", "get")
   @authorize(["user", "seller", "admin"])
@@ -45,13 +69,14 @@ export class OrdersRoutes {
     this.orderController.findById(req, res);
   }
 
-  @VerifyToken()
-  @Route("/update/:id", "put")
-  @authorize(["user", "seller"])
-  updateOrder(req: any, res: any) {
-    this.orderController.update(req, res);
-  }
-
+  /**
+   * Ruta para actualizar el estado de una orden.
+   *
+   * @param req La solicitud HTTP.
+   * @param res La respuesta HTTP.
+   * @returns El mensaje de éxito y la orden con el estado actualizado.
+   * @throws ApiError Si el estado no es válido o la transición no es permitida.
+   */
   @VerifyToken()
   @Route("/update-status/:id", "put")
   @authorize(["seller"])
@@ -59,9 +84,17 @@ export class OrdersRoutes {
     this.orderController.updateStatus(req, res);
   }
 
+  /**
+   * Ruta para eliminar una orden.
+   *
+   * @param req La solicitud HTTP.
+   * @param res La respuesta HTTP.
+   * @returns Estado 204 (sin contenido) si la orden fue eliminada.
+   * @throws ApiError Si la orden no se encuentra o el usuario no tiene permisos.
+   */
   @VerifyToken()
   @Route("/:id", "delete")
-  @authorize(["seller"])
+  @authorize(["seller", "user"])
   deleteOrder(req: any, res: any) {
     this.orderController.delete(req, res);
   }

@@ -6,6 +6,13 @@ import { ApiError } from "../../common/errors/apiError";
 const prisma = new PrismaClient();
 
 export class ProductRepositoryPrisma implements IProductRepository {
+  /**
+   * Crea un nuevo producto en la base de datos.
+   *
+   * @param data Datos del producto.
+   * @param userId ID del usuario creador.
+   * @returns El producto creado.
+   */
   async create(data: Product, userId: string): Promise<Product> {
     return await prisma.product.create({
       data: {
@@ -16,6 +23,12 @@ export class ProductRepositoryPrisma implements IProductRepository {
     });
   }
 
+  /**
+   * Busca un producto por su ID.
+   *
+   * @param id ID del producto.
+   * @returns El producto encontrado o `null` si no existe.
+   */
   async findById(id: string): Promise<Product | null> {
     return await prisma.product.findUnique({
       where: { id },
@@ -23,6 +36,14 @@ export class ProductRepositoryPrisma implements IProductRepository {
     });
   }
 
+  /**
+   * Devuelve una tabla paginada de productos, con posibilidad de aplicar filtros.
+   *
+   * @param page Página actual.
+   * @param size Cantidad de elementos por página.
+   * @param filter Filtros a aplicar: nombre, descripcion, disponible, userId.
+   * @returns Un objeto con la lista de productos y el conteo total.
+   */
   async table(
     page: number,
     size: number,
@@ -32,13 +53,11 @@ export class ProductRepositoryPrisma implements IProductRepository {
     count: number;
   }> {
     const validFilters = ["nombre", "descripcion", "disponible", "userId"];
-
     const where: any = {};
 
     for (const key in filter) {
       if (validFilters.includes(key)) {
         const value = filter[key];
-
         if (key === "disponible") {
           where[key] = value === "true";
         } else if (key === "userId") {
@@ -61,6 +80,13 @@ export class ProductRepositoryPrisma implements IProductRepository {
     return { data, count };
   }
 
+  /**
+   * Actualiza los datos de un producto.
+   *
+   * @param id ID del producto.
+   * @param data Datos parciales para actualizar.
+   * @returns El producto actualizado.
+   */
   async update(id: string, data: Partial<Product>): Promise<Product> {
     const { stock, ...rest } = data;
 
@@ -79,10 +105,23 @@ export class ProductRepositoryPrisma implements IProductRepository {
     });
   }
 
+  /**
+   * Elimina un producto por su ID.
+   *
+   * @param id ID del producto a eliminar.
+   */
   async delete(id: string): Promise<void> {
     await prisma.product.delete({ where: { id } });
   }
 
+  /**
+   * Agrega stock a un producto específico.
+   *
+   * @param id ID del producto.
+   * @param quantity Cantidad de stock a agregar.
+   * @returns El producto con el nuevo stock actualizado.
+   * @throws Error Si el producto no existe.
+   */
   async addStock(id: string, quantity: number): Promise<Product> {
     const product = await prisma.product.findUnique({
       where: { id },
@@ -103,6 +142,12 @@ export class ProductRepositoryPrisma implements IProductRepository {
     });
   }
 
+  /**
+   * Valida y actualiza el stock de los productos al realizar una orden.
+   *
+   * @param orderItems Lista de productos con su cantidad solicitada.
+   * @throws ApiError Si un producto no existe o no hay suficiente stock.
+   */
   async updateStockWithValidation(
     orderItems: { productId: string; cantidad: number }[]
   ): Promise<void> {

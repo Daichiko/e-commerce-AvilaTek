@@ -6,6 +6,13 @@ import { OrderStatus } from "../../common/enum/orderStatus.enum";
 const prisma = new PrismaClient();
 
 export class OrderRepositoryPrisma implements IOrderRepository {
+  /**
+   * Crea una nueva orden en la base de datos.
+   *
+   * @param data Datos de la nueva orden.
+   * @param userId ID del usuario que realiza la orden.
+   * @returns La orden creada.
+   */
   async create(data: Order, userId: string): Promise<Order> {
     return await prisma.order.create({
       data: {
@@ -16,6 +23,12 @@ export class OrderRepositoryPrisma implements IOrderRepository {
     });
   }
 
+  /**
+   * Busca una orden por su ID.
+   *
+   * @param id ID de la orden.
+   * @returns La orden encontrada o null si no existe.
+   */
   async findById(id: string): Promise<Order | null> {
     return await prisma.order.findUnique({
       where: { id },
@@ -23,6 +36,14 @@ export class OrderRepositoryPrisma implements IOrderRepository {
     });
   }
 
+  /**
+   * Obtiene una lista de órdenes con paginación y filtros.
+   *
+   * @param page Número de página para la paginación.
+   * @param size Tamaño de la página.
+   * @param filter Filtros de búsqueda como `userId`, `status`, `fechaInicio`, y `fechaFin`.
+   * @returns Un objeto con las órdenes encontradas y el total de órdenes.
+   */
   async table(
     page: number,
     size: number,
@@ -75,6 +96,13 @@ export class OrderRepositoryPrisma implements IOrderRepository {
     return { data, count };
   }
 
+  /**
+   * Actualiza los datos de una orden.
+   *
+   * @param id ID de la orden a actualizar.
+   * @param data Datos a actualizar en la orden.
+   * @returns La orden actualizada.
+   */
   async update(id: string, data: Partial<Order>): Promise<Order> {
     return await prisma.order.update({
       where: { id },
@@ -82,6 +110,13 @@ export class OrderRepositoryPrisma implements IOrderRepository {
     });
   }
 
+  /**
+   * Actualiza el estado de una orden.
+   *
+   * @param id ID de la orden a la cual se le actualizará el estado.
+   * @param status Nuevo estado de la orden.
+   * @returns La orden con el estado actualizado.
+   */
   async updateStatus(id: string, status: OrderStatus): Promise<Order> {
     return await prisma.order.update({
       where: { id },
@@ -91,6 +126,11 @@ export class OrderRepositoryPrisma implements IOrderRepository {
     });
   }
 
+  /**
+   * Elimina una orden de la base de datos.
+   *
+   * @param id ID de la orden a eliminar.
+   */
   async delete(id: string): Promise<void> {
     await prisma.order.delete({
       where: { id },

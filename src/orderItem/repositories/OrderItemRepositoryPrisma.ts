@@ -4,7 +4,17 @@ import { OrderItem } from "orderItem/repositories/orderItem.entity";
 
 const prisma = new PrismaClient();
 
+/**
+ * Implementación del repositorio de OrderItem utilizando Prisma.
+ * Contiene métodos para realizar operaciones CRUD sobre los elementos de la orden.
+ */
 export class OrderItemRepositoryPrisma implements IOrderItemRepository {
+  /**
+   * Crea un nuevo item de orden.
+   *
+   * @param data - Datos del item de orden a crear.
+   * @returns El item de orden creado.
+   */
   async create(data: OrderItem): Promise<OrderItem> {
     return await prisma.orderItem.create({
       data: {
@@ -13,6 +23,12 @@ export class OrderItemRepositoryPrisma implements IOrderItemRepository {
     });
   }
 
+  /**
+   * Busca un item de orden por su ID.
+   *
+   * @param id - ID del item de orden a buscar.
+   * @returns El item de orden encontrado o null si no existe.
+   */
   async findById(id: string): Promise<OrderItem> {
     return await prisma.orderItem.findUnique({
       where: { id },
@@ -20,6 +36,13 @@ export class OrderItemRepositoryPrisma implements IOrderItemRepository {
     });
   }
 
+  /**
+   * Busca un item de orden por los IDs de la orden y el producto.
+   *
+   * @param orderId - ID de la orden a la que pertenece el item.
+   * @param productId - ID del producto del item.
+   * @returns El item de orden encontrado o null si no existe.
+   */
   async findByIds(orderId: string, productId: string): Promise<OrderItem> {
     return await prisma.orderItem.findUnique({
       where: { orderId_productId: { orderId: orderId, productId: productId } },
@@ -27,6 +50,14 @@ export class OrderItemRepositoryPrisma implements IOrderItemRepository {
     });
   }
 
+  /**
+   * Obtiene una lista de items de orden con paginación y filtros opcionales.
+   *
+   * @param page - Página de la paginación.
+   * @param size - Número de elementos por página.
+   * @param filter - Filtros opcionales para la búsqueda.
+   * @returns Un objeto con los datos de los items de orden y el número total de elementos.
+   */
   async table(
     page: number,
     size: number,
@@ -58,6 +89,13 @@ export class OrderItemRepositoryPrisma implements IOrderItemRepository {
     return { data, count };
   }
 
+  /**
+   * Actualiza un item de orden existente.
+   *
+   * @param id - ID del item de orden a actualizar.
+   * @param data - Datos a actualizar en el item de orden.
+   * @returns El item de orden actualizado.
+   */
   async update(id: string, data: Partial<OrderItem>): Promise<OrderItem> {
     return await prisma.orderItem.update({
       where: { id },
@@ -65,6 +103,12 @@ export class OrderItemRepositoryPrisma implements IOrderItemRepository {
     });
   }
 
+  /**
+   * Elimina un item de orden.
+   *
+   * @param id - ID del item de orden a eliminar.
+   * @returns Void.
+   */
   async delete(id: string): Promise<void> {
     await prisma.orderItem.delete({
       where: { id },
