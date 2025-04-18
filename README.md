@@ -76,3 +76,8 @@ CREACION_PEDIDO
             │                       └──> RECIBIDO
             └──> CANCELADO_POR_VENDEDOR
 ```
+
+--- 
+
+## 🧩 Api documentation
+El repositorio tiene una carpeta llamada "doc" en la raiz donde se encuentra el manual de uso de la api en formato pdf y un archivo yaml con todas las rutas ya creadas del sistema, para su importacion en un aplicativo como insomnia o similares
