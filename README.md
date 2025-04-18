@@ -52,3 +52,13 @@ Este comando:
 npm run dev
 ```
 El servidor quedará disponible por defecto en: http://localhost:3000
+
+---
+
+## 👤 Usuario administrador precargado
+Puedes iniciar sesión con el siguiente usuario:
+
+- Email: admin@correo.com
+- Contraseña: 12345678
+
+Este usuario tiene acceso total al sistema
