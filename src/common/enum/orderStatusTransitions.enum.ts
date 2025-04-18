@@ -1,10 +1,7 @@
 import { OrderStatus } from "@prisma/client";
 
 export const OrderStatusTransitions = {
-  [OrderStatus.CREACION_PEDIDO]: [
-    OrderStatus.ESPERA_DISPONIBILIDAD,
-    OrderStatus.CANCELADO_POR_VENDEDOR,
-  ],
+  [OrderStatus.CREACION_PEDIDO]: [OrderStatus.ESPERA_DISPONIBILIDAD],
   [OrderStatus.ESPERA_DISPONIBILIDAD]: [
     OrderStatus.PAGO_PENDIENTE,
     OrderStatus.CANCELADO_POR_VENDEDOR,
