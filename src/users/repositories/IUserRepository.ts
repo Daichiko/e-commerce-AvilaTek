@@ -1,4 +1,4 @@
-import { User, UserWithoutPassword } from "../../common/entities/user.entity";
+import { User, UserWithoutPassword } from "./user.entity";
 
 export interface IUserRepository {
   create(data: Partial<User>): Promise<User>;

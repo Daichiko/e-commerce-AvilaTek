@@ -1,4 +1,4 @@
-import { Product } from "@entities/product.entity";
+import { Product } from "product/repositories/product.entity";
 
 export interface IProductRepository {
   create(data: Partial<Product>, userId: string): Promise<Product>;

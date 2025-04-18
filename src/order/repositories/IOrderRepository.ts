@@ -1,4 +1,4 @@
-import { Order } from "@entities/order.entity"; // Asegúrate de que la ubicación del entity sea correcta
+import { Order } from "order/repositories/order.entity"; // Asegúrate de que la ubicación del entity sea correcta
 import { CreateOrderDto, UpdateOrderDto } from "../dto/orderDto"; // DTOs que has creado
 
 export interface IOrderRepository {

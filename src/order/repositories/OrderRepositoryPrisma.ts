@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IOrderRepository } from "./IOrderRepository";
-import { Order } from "@entities/order.entity";
+import { Order } from "order/repositories/order.entity";
 import { OrderStatus } from "../../common/enum/orderStatus.enum";
 
 const prisma = new PrismaClient();

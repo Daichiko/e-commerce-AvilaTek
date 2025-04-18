@@ -33,6 +33,8 @@ model User {
   products      Product[]
   OrderUser     Order[]     @relation("OrderUser")
   OrderSeller   Order[]     @relation("OrdenSeller")
+
+  @@index([email])
 }
 
 model Product {

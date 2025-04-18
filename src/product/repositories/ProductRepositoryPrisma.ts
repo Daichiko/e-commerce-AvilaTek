@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IProductRepository } from "./IProductRepository";
-import { Product } from "@entities/product.entity";
+import { Product } from "product/repositories/product.entity";
 import { ApiError } from "../../common/errors/apiError";
 
 const prisma = new PrismaClient();
@@ -132,7 +132,7 @@ export class ProductRepositoryPrisma implements IProductRepository {
 
         await tx.product.update({
           where: { id: product.id },
-          data: { stock: newStock },
+          data: { stock: newStock, disponible: newStock > 0 },
         });
       }
     });

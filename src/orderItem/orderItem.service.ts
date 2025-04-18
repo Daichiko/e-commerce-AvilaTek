@@ -2,7 +2,7 @@ import { IOrderItemRepository } from "./repositories/IOrderItemRepository";
 import { CreateOrderItemDto, UpdateOrderItemDto } from "./dto/orderItemsDto";
 import { ApiError } from "../common/errors/apiError";
 import { validateDto } from "../common/utils/validateDto";
-import { OrderItem } from "@entities/orderItem.entity";
+import { OrderItem } from "orderItem/repositories/orderItem.entity";
 import { OrderStatus, OrderStatus as PrismaOrderStatus } from "@prisma/client";
 import { IOrderRepository } from "../order/repositories/IOrderRepository";
 import { IProductRepository } from "../product/repositories/IProductRepository";

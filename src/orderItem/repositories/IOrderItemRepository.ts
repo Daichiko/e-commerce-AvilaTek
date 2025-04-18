@@ -1,4 +1,4 @@
-import { OrderItem } from "@entities/orderItem.entity";
+import { OrderItem } from "orderItem/repositories/orderItem.entity";
 
 export interface IOrderItemRepository {
   create(data: Partial<OrderItem>): Promise<OrderItem>;
