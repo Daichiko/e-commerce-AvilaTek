@@ -1,4 +1,4 @@
-import { UserRole } from "@entities/userRole.entity";
+import { UserRole } from "roles/repositories/userRole.entity";
 import { Role } from "@prisma/client";
 
 export interface IRoleRepository {

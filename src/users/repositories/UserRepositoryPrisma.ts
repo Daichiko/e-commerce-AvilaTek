@@ -1,5 +1,5 @@
 import { IUserRepository } from "./IUserRepository";
-import { User, UserWithoutPassword } from "@entities/user.entity";
+import { User, UserWithoutPassword } from "users/repositories/user.entity";
 import { prisma } from "../../common/config/connectionDB";
 
 export class UserRepositoryPrisma implements IUserRepository {
