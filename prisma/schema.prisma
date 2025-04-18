@@ -13,15 +13,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderStatus {
+  CREACION_PEDIDO
+  ESPERA_DISPONIBILIDAD
+  CANCELADO_POR_VENDEDOR
+  PAGO_PENDIENTE
+  PROCESANDO
+  ENVIADO
+  RECIBIDO
+}
+
 model User {
   id            String      @id @default(uuid())
   nombre        String
   email         String      @unique
   password      String
   fechaCreacion DateTime    @default(now())
-  orders        Order[]
   UserRoles     UserRoles[]
   products      Product[]
+  OrderUser     Order[]     @relation("OrderUser")
+  OrderSeller   Order[]     @relation("OrdenSeller")
 }
 
 model Product {
@@ -39,22 +50,25 @@ model Product {
 
 model Order {
   id          String      @id @default(uuid())
-  usuarioId   String
+  userId      String
+  sellerId    String
   fechaPedido DateTime    @default(now())
-  estado      String
-  usuario     User        @relation(fields: [usuarioId], references: [id])
+  status      OrderStatus
   orderItems  OrderItem[]
+  User        User        @relation("OrderUser", fields: [userId], references: [id], map: "fk_orden_user")
+  seller      User        @relation("OrdenSeller", fields: [userId], references: [id], map: "fk_orden_seller")
 }
 
 model OrderItem {
-  id             String @id @default(uuid())
-  pedidoId       String
-  productoId     String
-  cantidad       Int
-  precioUnitario Float
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  cantidad  Int
 
-  pedido   Order   @relation(fields: [pedidoId], references: [id])
-  producto Product @relation(fields: [productoId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
 }
 
 model Role {

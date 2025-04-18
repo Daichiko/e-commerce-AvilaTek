@@ -1,6 +1,9 @@
+import { OrderStatus } from "@prisma/client";
+
 export class Order {
   id: string;
-  usuarioId: string;
+  userId: string;
+  sellerId: string;
   fechaPedido: Date;
-  estado: string;
+  status: OrderStatus;
 }

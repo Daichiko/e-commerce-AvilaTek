@@ -8,9 +8,6 @@ export class ProductController {
 
   async create(req: Request, res: Response): Promise<Response> {
     const userId = req["TokenDecode"]?.id;
-    if (!userId) {
-      return res.status(401).json({ message: "Usuario no autenticado" });
-    }
 
     const nuevoProducto = await this.productService.create(req.body, userId);
     return res.status(201).json(nuevoProducto);
@@ -23,9 +20,6 @@ export class ProductController {
 
   async update(req: Request, res: Response): Promise<Response> {
     const userId = req["TokenDecode"]?.id;
-    if (!userId) {
-      return res.status(401).json({ message: "Usuario no autenticado" });
-    }
 
     const productoActualizado = await this.productService.update(
       req.params.id,
@@ -37,9 +31,6 @@ export class ProductController {
 
   async delete(req: Request, res: Response): Promise<Response> {
     const userId = req["TokenDecode"]?.id;
-    if (!userId) {
-      return res.status(401).json({ message: "Usuario no autenticado" });
-    }
 
     await this.productService.delete(req.params.id, userId);
     return res.status(204).send();
