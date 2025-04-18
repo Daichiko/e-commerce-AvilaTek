@@ -36,9 +36,7 @@ export class ProductsRoutes {
    * @param req Solicitud HTTP con parámetros de paginación y filtros.
    * @param res Respuesta HTTP con los productos paginados.
    */
-  @VerifyToken()
   @Route("/table", "get")
-  @authorize(["user", "seller"])
   getProductsTable(req: any, res: any) {
     this.productController.table(req, res);
   }
@@ -50,9 +48,7 @@ export class ProductsRoutes {
    * @param req Solicitud HTTP con el ID del producto como parámetro.
    * @param res Respuesta HTTP con los datos del producto.
    */
-  @VerifyToken()
   @Route("/:id", "get")
-  @authorize(["user", "seller"])
   getProductById(req: any, res: any) {
     this.productController.findById(req, res);
   }
