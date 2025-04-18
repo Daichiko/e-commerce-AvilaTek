@@ -9,18 +9,34 @@ import { ProductsRoutes } from "./product/product.routes";
 import { OrdersRoutes } from "./order/order.routes";
 import { OrderItemRoutes } from "./orderItem/orderItem.routes";
 
-// import swaggerUi from "swagger-ui-express";
-// import swaggerJsdoc from "swagger-jsdoc";
-// import { swaggerSpec } from "./swagger/swaggerConfig";
-
+/**
+ * Clase que define y configura el servidor Express.
+ *
+ * La clase `Server` establece la configuración del servidor, maneja las rutas y
+ * expone el servidor a través de un puerto determinado. Esta clase incluye las
+ * configuraciones de middleware necesarias como `morgan` para logs, `cors` para
+ * el manejo de peticiones entre dominios, y `express.json()` para manejar solicitudes
+ * JSON, entre otras.
+ */
 class Server {
   public app: express.Application;
+
+  /**
+   * Constructor de la clase Server.
+   * Inicializa el servidor Express y configura el servidor.
+   */
   constructor() {
     this.app = express();
     this.config();
     this.routes();
   }
 
+  /**
+   * Configura el servidor Express.
+   *
+   * Establece configuraciones como el puerto, los middlewares de logging, CORS,
+   * y el parsing de cuerpo de las peticiones.
+   */
   config(): void {
     this.app.set("port", env.appConfig.port ?? 3000);
     this.app.use(morgan("dev"));
@@ -32,19 +48,16 @@ class Server {
 
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
-
-    // this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-    // this.app.get("/api-docs.json", (req, res) => {
-    //   res.setHeader("Content-Type", "application/json");
-    //   res.send(swaggerSpec);
-    // });
-
-    // console.log(
-    //   `Version 1 Docs are available on http://localhost:${env.appConfig.port}/api-docs`
-    // );
   }
 
+  /**
+   * Importa y configura las rutas automáticamente para el controlador dado.
+   *
+   * Itera sobre las rutas definidas en el controlador y las añade al servidor Express.
+   * Los controladores pueden tener rutas especificadas usando decoradores como `@Route`.
+   *
+   * @param ControllerClass - La clase del controlador que contiene las rutas a importar.
+   */
   importRoutesAutomatically(ControllerClass: any): void {
     const definedRoutes: any[] =
       Reflect.getMetadata("routes", ControllerClass.prototype) || [];
@@ -66,6 +79,10 @@ class Server {
     });
   }
 
+  /**
+   * Define las rutas básicas del servidor, incluyendo las rutas para cada
+   * controlador y la ruta raíz.
+   */
   routes(): void {
     this.app.get("/", (req, res) => {
       res.json({
@@ -80,6 +97,12 @@ class Server {
     this.importRoutesAutomatically(OrderItemRoutes);
   }
 
+  /**
+   * Inicia el servidor y lo pone a escuchar en el puerto configurado.
+   *
+   * Este método invoca el servidor Express y se queda escuchando las peticiones
+   * en el puerto configurado.
+   */
   start(): void {
     this.app.listen(this.app.get("port"), () => {});
     console.log("Escuchando por el puerto ", this.app.get("port"));

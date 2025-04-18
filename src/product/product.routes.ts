@@ -15,6 +15,13 @@ export class ProductsRoutes {
   protected productService = new ProductService(this.productRepository);
   protected productController = new ProductController(this.productService);
 
+  /**
+   * Ruta para crear un nuevo producto.
+   * Requiere autenticación y rol de "seller".
+   *
+   * @param req Solicitud HTTP con los datos del producto.
+   * @param res Respuesta HTTP con el producto creado.
+   */
   @VerifyToken()
   @Route("/", "post")
   @authorize(["seller"])
@@ -22,6 +29,13 @@ export class ProductsRoutes {
     this.productController.create(req, res);
   }
 
+  /**
+   * Ruta para obtener una tabla de productos con paginación y filtros.
+   * Disponible para usuarios autenticados con rol "user" o "seller".
+   *
+   * @param req Solicitud HTTP con parámetros de paginación y filtros.
+   * @param res Respuesta HTTP con los productos paginados.
+   */
   @VerifyToken()
   @Route("/table", "get")
   @authorize(["user", "seller"])
@@ -29,6 +43,13 @@ export class ProductsRoutes {
     this.productController.table(req, res);
   }
 
+  /**
+   * Ruta para obtener un producto específico por su ID.
+   * Disponible para usuarios autenticados con rol "user" o "seller".
+   *
+   * @param req Solicitud HTTP con el ID del producto como parámetro.
+   * @param res Respuesta HTTP con los datos del producto.
+   */
   @VerifyToken()
   @Route("/:id", "get")
   @authorize(["user", "seller"])
@@ -36,6 +57,13 @@ export class ProductsRoutes {
     this.productController.findById(req, res);
   }
 
+  /**
+   * Ruta para agregar stock a un producto existente.
+   * Requiere autenticación y rol de "seller".
+   *
+   * @param req Solicitud HTTP con el ID del producto y la cantidad a agregar.
+   * @param res Respuesta HTTP con el producto actualizado.
+   */
   @VerifyToken()
   @Route("/add-stock/:id", "put")
   @authorize(["seller"])
@@ -43,6 +71,13 @@ export class ProductsRoutes {
     this.productController.addStock(req, res);
   }
 
+  /**
+   * Ruta para actualizar un producto existente.
+   * Requiere autenticación y rol de "seller".
+   *
+   * @param req Solicitud HTTP con el ID del producto y los datos actualizados.
+   * @param res Respuesta HTTP con el producto actualizado.
+   */
   @VerifyToken()
   @Route("/update/:id", "put")
   @authorize(["seller"])
@@ -50,6 +85,13 @@ export class ProductsRoutes {
     this.productController.update(req, res);
   }
 
+  /**
+   * Ruta para eliminar un producto.
+   * Requiere autenticación y rol de "seller".
+   *
+   * @param req Solicitud HTTP con el ID del producto a eliminar.
+   * @param res Respuesta HTTP indicando el estado de la eliminación.
+   */
   @VerifyToken()
   @Route("/:id", "delete")
   @authorize(["seller"])

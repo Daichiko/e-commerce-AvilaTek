@@ -4,6 +4,16 @@ import { NextFunction, Response } from "express";
 import "reflect-metadata";
 import { RequestExt } from "../interfaces/resquestToken";
 
+/**
+ * Middleware que verifica la validez de un token JWT en la cabecera `Authorization`.
+ *
+ * Si el token es válido, se decodifica y se asigna a `req.TokenDecode`.
+ * Si no es válido o no está presente, retorna un error 401.
+ *
+ * @param req - Objeto de solicitud extendido con `TokenDecode`.
+ * @param res - Objeto de respuesta de Express.
+ * @param next - Función que llama al siguiente middleware.
+ */
 function verifyToken(req: RequestExt, res: Response, next: NextFunction) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -22,6 +32,23 @@ function verifyToken(req: RequestExt, res: Response, next: NextFunction) {
   }
 }
 
+/**
+ * Decorador de método que agrega verificación de token JWT al handler de una ruta.
+ *
+ * Se utiliza para proteger rutas que requieren autenticación. Añade el middleware
+ * `verifyToken` al comienzo del array de middlewares de la ruta.
+ *
+ * @example
+ * ```ts
+ * @VerifyToken()
+ * @Route("/profile", "get")
+ * getProfile(req: RequestExt, res: Response) {
+ *   // Solo accesible si el token es válido
+ * }
+ * ```
+ *
+ * @returns Decorador de método que modifica el arreglo de handlers para incluir la validación del token.
+ */
 export function VerifyToken(): MethodDecorator {
   return function (
     target: any,

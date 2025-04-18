@@ -14,6 +14,14 @@ export class OrderItemService {
     private productRepository: IProductRepository
   ) {}
 
+  /**
+   * Crea un nuevo item de orden en un pedido específico.
+   *
+   * @param dto - Objeto que contiene la información para crear el item de orden.
+   * @returns El item de orden creado.
+   * @throws ApiError Si la orden o el producto no existen, si el producto ya está en el pedido,
+   * o si el pedido no está en estado de "Creación de pedido".
+   */
   async create(dto: CreateOrderItemDto): Promise<OrderItem> {
     const dtoValidated = await validateDto(CreateOrderItemDto, dto);
 
@@ -37,7 +45,7 @@ export class OrderItemService {
     );
 
     if (orderItem) {
-      throw new ApiError("ya el producto se encuentra en el pedido", 404, []);
+      throw new ApiError("Ya el producto se encuentra en el pedido", 404, []);
     }
 
     if (product.userId !== order.sellerId) {
@@ -50,7 +58,7 @@ export class OrderItemService {
 
     if (order.status !== OrderStatus.CREACION_PEDIDO) {
       throw new ApiError(
-        "No se puede cargar un producto a un pedido que no este en borrador",
+        "No se puede cargar un producto a un pedido que no esté en borrador",
         400,
         []
       );
@@ -59,12 +67,26 @@ export class OrderItemService {
     return this.orderItemRepository.create(dtoValidated);
   }
 
+  /**
+   * Actualiza un item de orden existente.
+   *
+   * @param id - ID del item de orden a actualizar.
+   * @param dto - Datos a actualizar en el item de orden.
+   * @returns El item de orden actualizado.
+   */
   async update(id: string, dto: UpdateOrderItemDto): Promise<OrderItem> {
     const dtoValidated = await validateDto(UpdateOrderItemDto, dto);
 
     return this.orderItemRepository.update(id, dtoValidated);
   }
 
+  /**
+   * Elimina un item de orden.
+   *
+   * @param id - ID del item de orden a eliminar.
+   * @returns Void.
+   * @throws ApiError Si el item no existe o si el pedido ya no está en estado "Creación de pedido".
+   */
   async delete(id: string): Promise<void> {
     const existingItem = await this.orderItemRepository.findById(id);
 
@@ -74,7 +96,7 @@ export class OrderItemService {
 
     if (existingItem["order"].status !== PrismaOrderStatus.CREACION_PEDIDO) {
       throw new ApiError(
-        "No se puede eliminar un item de un pedido que ya paso el estatus de creacion de pedido",
+        "No se puede eliminar un item de un pedido que ya pasó el estatus de creación de pedido",
         404,
         []
       );
@@ -83,6 +105,15 @@ export class OrderItemService {
     await this.orderItemRepository.delete(id);
   }
 
+  /**
+   * Obtiene una lista de items de orden con paginación y filtros opcionales.
+   *
+   * @param page - Página de la paginación.
+   * @param size - Número de elementos por página.
+   * @param filter - Filtros opcionales para la búsqueda de items de orden.
+   * @returns Un objeto con los datos de los items de orden y el número total de elementos.
+   * @throws ApiError Si los datos de paginación no son válidos.
+   */
   async table(
     page: number,
     size: number,

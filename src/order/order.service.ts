@@ -5,11 +5,13 @@ import { validateDto } from "../common/utils/validateDto";
 import { OrderStatus } from "../common/enum/orderStatus.enum";
 import { OrderItem, OrderStatus as PrismaOrderStatus } from "@prisma/client";
 import { isValidStatusTransition } from "../common/utils/orderStatusValidar";
-import { mapPrismaStatusToAppStatus } from "../common/utils/mapPrismaStatusToAppStatus";
 import { isValidISODate } from "../common/utils/isValidISODate";
 import { IUserRepository } from "../users/repositories/IUserRepository";
 import { IProductRepository } from "../product/repositories/IProductRepository";
 
+/**
+ * Servicio de órdenes que maneja la lógica de negocio relacionada con las órdenes.
+ */
 export class OrderService {
   constructor(
     private orderRepository: IOrderRepository,
@@ -17,17 +19,23 @@ export class OrderService {
     private productRepository: IProductRepository
   ) {}
 
+  /**
+   * Crea una nueva orden en el sistema.
+   *
+   * @param dto Datos de la nueva orden.
+   * @param userId ID del usuario que realiza la creación de la orden.
+   * @returns La orden recién creada.
+   * @throws ApiError Si el usuario o el vendedor no se encuentran.
+   */
   async create(dto: CreateOrderDto, userId: string) {
     const dtoValidated = await validateDto(CreateOrderDto, dto);
 
     const user = await this.userRepository.findById(dtoValidated.userId);
-
     if (!user) {
       throw new ApiError("Usuario no encontrado", 404, []);
     }
 
     const seller = await this.userRepository.findById(dtoValidated.sellerId);
-
     if (!seller) {
       throw new ApiError("Vendedor no encontrado", 404, []);
     }
@@ -35,6 +43,13 @@ export class OrderService {
     return this.orderRepository.create(dtoValidated, userId);
   }
 
+  /**
+   * Busca una orden por su ID.
+   *
+   * @param id ID de la orden.
+   * @returns La orden encontrada.
+   * @throws ApiError Si la orden no existe.
+   */
   async findById(id: string) {
     const order = await this.orderRepository.findById(id);
 
@@ -45,6 +60,15 @@ export class OrderService {
     return order;
   }
 
+  /**
+   * Actualiza los datos de una orden.
+   *
+   * @param id ID de la orden a actualizar.
+   * @param dto Datos a actualizar en la orden.
+   * @param userId ID del usuario que realiza la actualización.
+   * @returns La orden actualizada.
+   * @throws ApiError Si la orden no existe o el usuario no tiene permisos.
+   */
   async update(id: string, dto: UpdateOrderDto, userId: string) {
     const dtoValidated = await validateDto(UpdateOrderDto, dto);
 
@@ -68,6 +92,14 @@ export class OrderService {
     return this.orderRepository.update(id, dtoValidated);
   }
 
+  /**
+   * Actualiza el estado de una orden.
+   *
+   * @param id ID de la orden.
+   * @param status Nuevo estado de la orden.
+   * @returns La orden con el nuevo estado.
+   * @throws ApiError Si la transición de estado no es válida.
+   */
   async updateStatus(id: string, status: OrderStatus) {
     const order = await this.orderRepository.findById(id);
 
@@ -75,12 +107,7 @@ export class OrderService {
       throw new ApiError("Orden no encontrada", 404, []);
     }
 
-    const prismaStatusOrder = mapPrismaStatusToAppStatus(status);
-
-    const isTransitionValid = isValidStatusTransition(
-      order.status,
-      prismaStatusOrder
-    );
+    const isTransitionValid = isValidStatusTransition(order.status, status);
 
     if (!isTransitionValid) {
       throw new ApiError(
@@ -90,13 +117,19 @@ export class OrderService {
       );
     }
 
-    if (prismaStatusOrder === PrismaOrderStatus.PAGO_PENDIENTE) {
+    if (status === PrismaOrderStatus.PAGO_PENDIENTE) {
       await this.updateProducts(order["orderItems"]);
     }
 
-    return this.orderRepository.updateStatus(id, prismaStatusOrder);
+    return this.orderRepository.updateStatus(id, status);
   }
 
+  /**
+   * Actualiza el stock de los productos relacionados con la orden.
+   *
+   * @param orderItems Los ítems de la orden que se están actualizando.
+   * @throws ApiError Si el stock no es suficiente para uno de los productos.
+   */
   private async updateProducts(orderItems: OrderItem[]) {
     const orders = orderItems.map((item) => ({
       productId: item["product"].id,
@@ -114,6 +147,13 @@ export class OrderService {
     }
   }
 
+  /**
+   * Elimina una orden del sistema.
+   *
+   * @param id ID de la orden a eliminar.
+   * @param userId ID del usuario que solicita la eliminación.
+   * @throws ApiError Si la orden no existe o el usuario no tiene permisos.
+   */
   async delete(id: string, userId: string) {
     const order = await this.orderRepository.findById(id);
 
@@ -132,6 +172,15 @@ export class OrderService {
     await this.orderRepository.delete(id);
   }
 
+  /**
+   * Obtiene una lista de órdenes con paginación y filtros aplicados.
+   *
+   * @param page Número de página para la paginación.
+   * @param size Tamaño de la página.
+   * @param filter Filtros para buscar órdenes, como fecha de inicio, fecha de fin y estado.
+   * @returns Una lista paginada de órdenes que cumplen con los filtros.
+   * @throws ApiError Si los filtros son inválidos.
+   */
   async table(page: number, size: number, filter: any) {
     if (page <= 0 || size <= 0) {
       throw new ApiError("Los datos de paginación no son válidos", 400, []);
@@ -165,7 +214,7 @@ export class OrderService {
           []
         );
       }
-      filter["status"] = mapPrismaStatusToAppStatus(status);
+      filter["status"] = status;
     }
 
     return this.orderRepository.table(page, size, filter);
