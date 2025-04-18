@@ -62,3 +62,17 @@ Puedes iniciar sesión con el siguiente usuario:
 - Contraseña: 12345678
 
 Este usuario tiene acceso total al sistema
+
+---
+
+## 🌀 Flujo de estados de las órdenes
+Las órdenes dentro del sistema siguen un flujo definido que regula su estado desde su creación hasta la recepción por parte del cliente. A continuación, se muestra el flujo posible de cada estado:
+```objectivec
+CREACION_PEDIDO
+    └──> ESPERA_DISPONIBILIDAD
+            ├──> PAGO_PENDIENTE
+            │       └──> PROCESANDO
+            │               └──> ENVIADO
+            │                       └──> RECIBIDO
+            └──> CANCELADO_POR_VENDEDOR
+```
